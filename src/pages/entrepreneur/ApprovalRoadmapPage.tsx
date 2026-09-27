@@ -1,9 +1,10 @@
 import { useState, useCallback } from 'react';
-import { motion } from 'framer-motion';
-import { Filter, GitBranch, ChevronRight, CheckCircle2, Clock, AlertCircle, Loader2, Lock } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Filter, GitBranch, ChevronRight, CheckCircle2, Clock, AlertCircle, Loader2, Lock, Plus, PlayCircle } from 'lucide-react';
 import { approvals, getDepartment, getApplicationByApprovalId } from '../../data/mockData';
 import { useNavigate } from 'react-router-dom';
 import type { ApprovalStatus } from '../../data/types';
+import ApplyForApprovalModal from './ApplyForApprovalModal';
 
 const container = { hidden: {}, show: { transition: { staggerChildren: 0.05 } } };
 const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0 } };
@@ -47,6 +48,7 @@ function computeLayers() {
 export default function ApprovalRoadmapPage() {
   const [filter, setFilter] = useState<FilterType>('all');
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  const [applyApprovalId, setApplyApprovalId] = useState<string | null>(null);
   const navigate = useNavigate();
   const layers = computeLayers();
 
@@ -91,9 +93,16 @@ export default function ApprovalRoadmapPage() {
             <GitBranch size={24} className="text-blue-500" />
             Your Regulatory Roadmap
           </h1>
-          <p className="text-slate-500 text-sm mt-1">Approvals identified from your business profile.</p>
+          <p className="text-slate-500 text-sm mt-1">Approvals identified from your business profile. Click any pending item to apply.</p>
         </div>
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 max-w-full">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setApplyApprovalId('__select__')}
+            className="flex items-center gap-2 px-4 py-2 bg-[#123b6d] text-white rounded-lg text-sm font-semibold hover:bg-[#0f2f58] transition-colors shrink-0"
+          >
+            <Plus size={16} /> Apply for Approval
+          </button>
+          <div className="flex items-center gap-2 overflow-x-auto pb-1">
           <Filter size={14} className="text-slate-400 shrink-0" />
           {(['all', 'required', 'in_progress', 'completed', 'blocked', 'renewal'] as FilterType[]).map(f => (
             <button
@@ -107,6 +116,7 @@ export default function ApprovalRoadmapPage() {
               {f === 'all' ? 'All' : f === 'in_progress' ? 'In Progress' : f.charAt(0).toUpperCase() + f.slice(1)}
             </button>
           ))}
+        </div>
         </div>
       </motion.div>
 
@@ -182,6 +192,7 @@ export default function ApprovalRoadmapPage() {
             const dept = getDepartment(appr.departmentId);
             const cfg = statusConfig[appr.status];
             const app = getApplicationByApprovalId(appr.id);
+            const canApply = appr.status === 'not_started';
 
             return (
               <motion.div
@@ -201,7 +212,16 @@ export default function ApprovalRoadmapPage() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
+                    {canApply && (
+                      <button
+                        type="button"
+                        onClick={e => { e.stopPropagation(); setApplyApprovalId(appr.id); }}
+                        className="hidden md:flex items-center gap-1.5 text-xs font-semibold text-[#123b6d] border border-[#123b6d]/30 px-3 py-1.5 rounded-lg hover:bg-blue-50 transition-colors"
+                      >
+                        <PlayCircle size={14} /> Apply Now
+                      </button>
+                    )}
                     <div className="text-right hidden md:block">
                       <span className={`status-badge ${
                         appr.status === 'completed' ? 'status-completed' :
@@ -235,6 +255,17 @@ export default function ApprovalRoadmapPage() {
           })}
         </div>
       </motion.div>
+
+      {/* Apply Modal */}
+      <AnimatePresence>
+        {applyApprovalId && (
+          <ApplyForApprovalModal
+            preSelectedApprovalId={applyApprovalId === '__select__' ? undefined : applyApprovalId}
+            onClose={() => setApplyApprovalId(null)}
+            onSubmitted={() => setApplyApprovalId(null)}
+          />
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

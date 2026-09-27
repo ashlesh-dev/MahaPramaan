@@ -51,7 +51,7 @@ export default function GovApplicationsPage() {
               <tr 
                 key={app.id} 
                 className="hover:bg-slate-50 cursor-pointer transition-colors"
-                onClick={() => navigate('/gov/scrutiny')}
+                onClick={() => navigate(`/gov/applications/${app.id}`)}
               >
                 <td className="px-6 py-4">
                   <p className="text-sm font-semibold text-slate-800 font-mono">{app.applicationNumber}</p>
@@ -89,7 +89,8 @@ export default function GovApplicationsPage() {
                   </span>
                 </td>
                 <td className="px-6 py-4 text-right">
-                  <button className="text-xs font-semibold text-blue-600 border border-blue-200 px-3 py-1.5 rounded hover:bg-blue-50 transition-colors">
+                  <button className="text-xs font-semibold text-blue-600 border border-blue-200 px-3 py-1.5 rounded hover:bg-blue-50 transition-colors"
+                    onClick={(e) => { e.stopPropagation(); navigate(`/gov/applications/${app.id}`); }}>
                     Review
                   </button>
                 </td>

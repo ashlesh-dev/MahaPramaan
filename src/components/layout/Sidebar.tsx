@@ -34,6 +34,7 @@ export default function Sidebar() {
     { to: '/gov/scrutiny', icon: AlertTriangle, label: 'Risk & Scrutiny' },
     { to: '/gov/inspections', icon: CalendarDays, label: 'Inspection Planner' },
     { to: '/gov/prefill', icon: Users, label: 'Data Reuse & Pre-fill' },
+    { to: '/gov/grievances', icon: MessageSquare, label: 'Escalations & Grievances' },
   ];
 
   const links = role === 'officer' ? officerLinks : entrepreneurLinks;

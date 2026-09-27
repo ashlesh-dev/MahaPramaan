@@ -19,6 +19,8 @@ import RiskScrutinyPage from './pages/government/RiskScrutinyPage';
 import GovInspectionPlannerPage from './pages/government/GovInspectionPlannerPage';
 import DataReusePage from './pages/government/DataReusePage';
 import GovApplicationsPage from './pages/government/GovApplicationsPage';
+import GovApplicationDetailPage from './pages/government/GovApplicationDetailPage';
+import GovGrievancesPage from './pages/government/GovGrievancesPage';
 import RegistrationPage from './pages/entrepreneur/RegistrationPage';
 import PublicHomePage from './pages/PublicHomePage';
 import { useApp } from './hooks/useApp';
@@ -51,10 +53,12 @@ export default function App() {
         {/* Government Routes */}
         <Route path="gov/overview" element={<OfficerOverviewPage />} />
         <Route path="gov/applications" element={<GovApplicationsPage />} />
+        <Route path="gov/applications/:id" element={<GovApplicationDetailPage />} />
         <Route path="gov/bottlenecks" element={<BottleneckAnalyticsPage />} />
         <Route path="gov/scrutiny" element={<RiskScrutinyPage />} />
         <Route path="gov/inspections" element={<GovInspectionPlannerPage />} />
         <Route path="gov/prefill" element={<DataReusePage />} />
+        <Route path="gov/grievances" element={<GovGrievancesPage />} />
 
         {/* Catch-all */}
         <Route path="*" element={<Navigate to="/" replace />} />
