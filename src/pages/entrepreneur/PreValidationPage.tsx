@@ -1,215 +1,34 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { CheckCircle2, AlertCircle, AlertTriangle, ShieldCheck, RefreshCw, Upload, Loader2, Play } from 'lucide-react';
-import { demoBusiness } from '../../data/mockData';
+import { useMemo, useState } from 'react';
+import { motion } from 'framer-motion';
+import { AlertCircle, AlertTriangle, Check, CheckCircle2, ChevronDown, FileCheck2, FileText, Info, RefreshCw, ShieldCheck, UploadCloud, XCircle } from 'lucide-react';
 
-const container = { hidden: {}, show: { transition: { staggerChildren: 0.1 } } };
-const item = { hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } };
+type State = 'submitted' | 'missing' | 'incorrect';
+type Requirement = { id: string; name: string; approval: string; status: State; file?: string; note: string; fields: string[]; liveUpload?: boolean };
+const initial: Requirement[] = [
+  { id: 'land', name: 'Premises / land proof', approval: 'MPCB · Consent to Establish', status: 'submitted', file: 'MIDC_lease_agreement.pdf', note: 'Address and plot details appear in the demo record.', fields: ['Business / occupier name', 'Industrial plot number', 'Address'] },
+  { id: 'flow', name: 'Manufacturing process flow', approval: 'MPCB · Consent to Establish', status: 'submitted', file: 'process_flow_v2.pdf', note: 'Process title found; sequence and capacity appear complete in the demo record.', fields: ['Product / process name', 'Process sequence', 'Daily capacity'] },
+  { id: 'water', name: 'Water balance statement', approval: 'MPCB · Consent to Establish', status: 'missing', note: 'No file submitted yet.', fields: ['Source and daily intake', 'Process consumption', 'Effluent / reuse'] },
+  { id: 'site', name: 'Site plan with drainage', approval: 'MPCB · Consent to Establish', status: 'incorrect', file: 'machinery_schedule_old.pdf', note: 'Demo check: uploaded file appears to be a machinery schedule, not the requested site plan. Plot number and drainage markings are also absent.', fields: ['Requested document type: site plan', 'Plot number', 'North direction / scale', 'Drainage and discharge points'] },
+  { id: 'layout', name: 'Premises layout', approval: 'FSSAI · Food business licence', status: 'submitted', file: 'factory_layout.pdf', note: 'Layout file is present; competent authority review is still required.', fields: ['Processing area', 'Storage areas', 'Entry / exit'] },
+  { id: 'safety', name: 'Food safety management plan', approval: 'FSSAI · Food business licence', status: 'missing', note: 'No file submitted yet.', fields: ['Food safety controls', 'Cleaning schedule', 'Responsible person'] },
+];
+const statusStyle: Record<State, string> = { submitted: 'bg-emerald-50 text-emerald-800 border-emerald-200', missing: 'bg-rose-50 text-rose-800 border-rose-200', incorrect: 'bg-amber-50 text-amber-900 border-amber-200' };
+const statusLabel: Record<State, string> = { submitted: 'Submitted', missing: 'Missing', incorrect: 'Incorrect / incomplete' };
 
 export default function PreValidationPage() {
-  const [validating, setValidating] = useState(false);
-  const [showResults, setShowResults] = useState(false);
-  const [fixed, setFixed] = useState(false);
-
-  const handleValidate = () => {
-    setValidating(true);
-    setShowResults(false);
-    setTimeout(() => {
-      setValidating(false);
-      setShowResults(true);
-    }, 2000);
-  };
-
-  const handleFix = () => {
-    setValidating(true);
-    setTimeout(() => {
-      setValidating(false);
-      setFixed(true);
-    }, 1500);
-  };
-
-  return (
-    <motion.div variants={container} initial="hidden" animate="show" className="max-w-4xl mx-auto space-y-6">
-      <motion.div variants={item} className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-slate-800 mb-2">Application Readiness Check</h1>
-        <p className="text-slate-500">Run a pre-validation check before submitting your Pollution Consent application.</p>
-      </motion.div>
-
-      {!showResults && !validating && (
-        <motion.div variants={item} className="bg-white rounded-2xl border border-slate-200 p-10 text-center shadow-sm">
-          <div className="w-20 h-20 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
-            <ShieldCheck size={40} className="text-blue-500" />
-          </div>
-          <h2 className="text-xl font-semibold text-slate-800 mb-2">Ready to validate?</h2>
-          <p className="text-slate-500 text-sm max-w-md mx-auto mb-8">
-            The system will cross-check your business profile, required documents, and previous submissions to ensure your application is complete.
-          </p>
-          <button
-            onClick={handleValidate}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors shadow-lg shadow-blue-600/20"
-          >
-            <Play size={18} />
-            Run Validation Check
-          </button>
-        </motion.div>
-      )}
-
-      {validating && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="bg-white rounded-2xl border border-slate-200 p-12 text-center"
-        >
-          <Loader2 size={48} className="animate-spin text-blue-500 mx-auto mb-6" />
-          <h2 className="text-xl font-semibold text-slate-800 mb-2">Analysing Application Data...</h2>
-          <p className="text-slate-500 text-sm">Checking document integrity and business rules.</p>
-        </motion.div>
-      )}
-
-      <AnimatePresence>
-        {showResults && !validating && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="space-y-6"
-          >
-            {/* Score Card */}
-            <div className={`rounded-2xl border p-8 text-center relative overflow-hidden ${
-              fixed ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-slate-200'
-            }`}>
-              {fixed && (
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-emerald-100/50 to-transparent" />
-              )}
-              
-              <div className="relative z-10">
-                <div className="flex justify-center mb-4">
-                  <div className={`circular-progress ${fixed ? 'text-emerald-500' : 'text-blue-500'}`}>
-                    <svg className="w-full h-full" viewBox="0 0 100 100">
-                      <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" strokeWidth="8" className="opacity-20" />
-                      <circle 
-                        cx="50" cy="50" r="45" 
-                        fill="none" stroke="currentColor" strokeWidth="8" 
-                        strokeLinecap="round"
-                        strokeDasharray="283"
-                        strokeDashoffset={fixed ? 0 : 283 * (1 - 0.87)}
-                        className="transition-all duration-1000 ease-out"
-                      />
-                    </svg>
-                    <div className="progress-text">
-                      {fixed ? '100%' : '87%'}
-                    </div>
-                  </div>
-                </div>
-                
-                <h2 className={`text-2xl font-bold mb-2 ${fixed ? 'text-emerald-800' : 'text-slate-800'}`}>
-                  {fixed ? 'Application is 100% Ready' : 'Application is 87% Ready'}
-                </h2>
-                <p className={fixed ? 'text-emerald-600' : 'text-slate-500'}>
-                  {fixed ? 'All requirements met. You can now submit your application.' : 'Some items require your attention before submission.'}
-                </p>
-
-                {fixed && (
-                  <motion.button
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="mt-6 px-8 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 shadow-lg shadow-emerald-600/20"
-                  >
-                    Submit Application
-                  </motion.button>
-                )}
-              </div>
-            </div>
-
-            {/* Breakdown */}
-            <div className="surface-card p-6">
-              <h3 className="font-semibold text-slate-800 mb-4">Validation Breakdown</h3>
-              
-              <div className="space-y-3">
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-emerald-50 border border-emerald-100">
-                  <CheckCircle2 size={20} className="text-emerald-600 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-emerald-900">Business Information Complete</p>
-                    <p className="text-xs text-emerald-700 mt-0.5">All required profile fields are populated.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-emerald-50 border border-emerald-100">
-                  <CheckCircle2 size={20} className="text-emerald-600 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-emerald-900">Identity Documents Verified</p>
-                    <p className="text-xs text-emerald-700 mt-0.5">PAN ({demoBusiness.pan}) and GST verified successfully.</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3 p-3 rounded-lg bg-emerald-50 border border-emerald-100">
-                  <CheckCircle2 size={20} className="text-emerald-600 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-emerald-900">Land & Project Documents</p>
-                    <p className="text-xs text-emerald-700 mt-0.5">MIDC Allotment and DPR are present and verified.</p>
-                  </div>
-                </div>
-
-                {!fixed ? (
-                  <>
-                    <div className="flex items-start gap-3 p-3 rounded-lg bg-amber-50 border border-amber-200">
-                      <AlertTriangle size={20} className="text-amber-600 shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium text-amber-900">Machinery Details Incomplete</p>
-                        <p className="text-xs text-amber-700 mt-0.5">The uploaded document appears to be missing page 2.</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3 p-3 rounded-lg bg-red-50 border border-red-200">
-                      <AlertCircle size={20} className="text-red-600 shrink-0 mt-0.5" />
-                      <div className="w-full">
-                        <div className="flex items-center justify-between mb-1">
-                          <p className="text-sm font-medium text-red-900">Water Declaration Missing</p>
-                          <span className="text-[10px] font-bold px-2 py-0.5 bg-red-100 text-red-700 rounded uppercase tracking-wider">Required</span>
-                        </div>
-                        <p className="text-xs text-red-700 mb-3">This document is mandatory for Pollution Consent.</p>
-                        <button
-                          onClick={handleFix}
-                          className="flex items-center gap-2 px-3 py-1.5 bg-white border border-red-200 text-red-700 rounded text-xs font-medium hover:bg-red-50"
-                        >
-                          <Upload size={14} />
-                          Upload Document & Fix All
-                        </button>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-start gap-3 p-3 rounded-lg bg-emerald-50 border border-emerald-100">
-                      <CheckCircle2 size={20} className="text-emerald-600 shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium text-emerald-900">Machinery Details Completed</p>
-                        <p className="text-xs text-emerald-700 mt-0.5">Updated document verified.</p>
-                      </div>
-                    </motion.div>
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-start gap-3 p-3 rounded-lg bg-emerald-50 border border-emerald-100">
-                      <CheckCircle2 size={20} className="text-emerald-600 shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-sm font-medium text-emerald-900">Water Declaration Uploaded</p>
-                        <p className="text-xs text-emerald-700 mt-0.5">Mandatory document requirement met.</p>
-                      </div>
-                    </motion.div>
-                  </>
-                )}
-              </div>
-            </div>
-            
-            <div className="text-center pb-8">
-              <button 
-                onClick={() => { setShowResults(false); setFixed(false); }}
-                className="text-sm text-slate-500 hover:text-slate-800 flex items-center justify-center gap-2 mx-auto"
-              >
-                <RefreshCw size={14} />
-                Run check again
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
+  const [requirements, setRequirements] = useState(initial); const [checked, setChecked] = useState(false); const [busy, setBusy] = useState(false); const [filter, setFilter] = useState('All approvals');
+  const filtered = useMemo(() => filter === 'All approvals' ? requirements : requirements.filter(item => item.approval.startsWith(filter)), [filter, requirements]);
+  const upload = (id: string, file?: File) => { if (!file) return; setRequirements(list => list.map(item => item.id === id ? { ...item, status: 'submitted', file: file.name, liveUpload: true, note: 'File received for this requested document. This prototype does not inspect its contents.' } : item)); setChecked(false); };
+  const runCheck = () => { setBusy(true); setChecked(false); window.setTimeout(() => { setBusy(false); setChecked(true); }, 650); };
+  const count = (status: State) => requirements.filter(item => item.status === status).length;
+  return <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mx-auto max-w-6xl space-y-5 pb-10">
+    <div className="rounded-2xl bg-[#123b6d] text-white p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-5"><div><div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-blue-100"><ShieldCheck size={16}/> Document pre-validation</div><h1 className="text-2xl md:text-3xl font-bold mt-2">Know what needs attention before you submit.</h1><p className="text-sm text-blue-100 mt-2 max-w-2xl">Check requested document type, expected information and completeness across an approval application.</p></div><button type="button" disabled={busy} onClick={runCheck} className="inline-flex items-center justify-center gap-2 rounded-lg bg-white text-[#123b6d] px-5 py-3 text-sm font-semibold hover:bg-blue-50 disabled:opacity-70">{busy ? <RefreshCw size={17} className="animate-spin"/> : <FileCheck2 size={17}/>} {busy ? 'Checking demo files…' : checked ? 'Run check again' : 'Run readiness check'}</button></div>
+    <div className="flex items-start gap-3 rounded-xl border border-blue-200 bg-blue-50 p-4 text-sm text-blue-950"><Info size={18} className="mt-0.5 shrink-0 text-blue-700"/><p><strong>Prototype demonstration:</strong> The results below are mocked examples. This page does not read document contents or verify legal authenticity. Only the concerned authority can confirm document validity and requirements.</p></div>
+    <div className="grid sm:grid-cols-3 gap-3"><div className="surface-card p-4 flex items-center gap-3"><span className="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-700"><CheckCircle2 size={19}/></span><div><p className="text-xl font-bold text-slate-900">{count('submitted')}</p><p className="text-xs text-slate-500">Submitted</p></div></div><div className="surface-card p-4 flex items-center gap-3"><span className="w-9 h-9 rounded-lg bg-rose-50 flex items-center justify-center text-rose-700"><XCircle size={19}/></span><div><p className="text-xl font-bold text-slate-900">{count('missing')}</p><p className="text-xs text-slate-500">Missing</p></div></div><div className="surface-card p-4 flex items-center gap-3"><span className="w-9 h-9 rounded-lg bg-amber-50 flex items-center justify-center text-amber-700"><AlertTriangle size={19}/></span><div><p className="text-xl font-bold text-slate-900">{count('incorrect')}</p><p className="text-xs text-slate-500">Incorrect / incomplete</p></div></div></div>
+    {checked && <div className="surface-card p-4 md:p-5 border-l-4 border-l-[#123b6d]"><div className="flex items-center gap-2"><CheckCircle2 size={19} className="text-[#123b6d]"/><h2 className="font-semibold text-slate-900">Demo readiness summary</h2></div><p className="text-sm text-slate-600 mt-1">{count('submitted')} of {requirements.length} requested documents have a file. {count('missing')} are missing and {count('incorrect')} need correction. Uploaded replacements are marked received; this simulation does not inspect file content.</p></div>}
+    <section className="surface-card overflow-hidden"><div className="p-5 md:p-6 border-b border-slate-100 flex flex-col sm:flex-row gap-3 sm:items-center justify-between"><div><h2 className="font-semibold text-slate-900">Approval document checklist</h2><p className="text-xs text-slate-500 mt-1">Demo application · Food processing unit · Nashik</p></div><label className="relative"><span className="sr-only">Filter approval</span><select value={filter} onChange={event => setFilter(event.target.value)} className="appearance-none rounded-lg border border-slate-300 bg-white py-2 pl-3 pr-9 text-sm text-slate-700"><option>All approvals</option><option>MPCB</option><option>FSSAI</option></select><ChevronDown size={15} className="absolute right-3 top-2.5 pointer-events-none text-slate-500"/></label></div>
+      <div className="divide-y divide-slate-100">{filtered.map(item => <article key={item.id} className="p-5 md:p-6"><div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4"><div className="flex gap-3 min-w-0"><div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 shrink-0"><FileText size={19}/></div><div className="min-w-0"><p className="text-[11px] text-slate-500 font-semibold uppercase tracking-wide">{item.approval}</p><h3 className="font-semibold text-slate-900 mt-0.5">{item.name}</h3><p className="text-sm text-slate-600 mt-1">{item.file ?? 'No file uploaded'}</p><p className={`text-xs mt-2 ${item.status === 'submitted' ? 'text-emerald-700' : item.status === 'incorrect' ? 'text-amber-800' : 'text-rose-700'}`}>{item.note}</p>{checked && <div className="mt-3 flex flex-wrap gap-2">{item.liveUpload ? <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 text-slate-700 px-2 py-1 text-[11px]"><Info size={12}/>File received · contents not inspected</span> : item.fields.map((field, index) => { const issue = item.status === 'missing' || item.status === 'incorrect' && index === 0; return <span key={field} className={`inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] ${issue ? 'bg-amber-50 text-amber-800' : 'bg-emerald-50 text-emerald-800'}`}>{issue ? <AlertCircle size={12}/> : <Check size={12}/>} {field} {issue ? '— review' : '— present in demo'}</span>; })}</div>}</div></div><div className="flex items-center gap-3 lg:pt-1 shrink-0"><span className={`text-[11px] font-semibold border rounded-full px-2.5 py-1 ${statusStyle[item.status]}`}>{statusLabel[item.status]}</span><label className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer"><UploadCloud size={15}/>{item.file ? 'Replace file' : 'Upload file'}<input type="file" accept=".pdf,.png,.jpg,.jpeg" className="sr-only" onChange={event => upload(item.id, event.target.files?.[0])}/></label></div></div></article>)}</div>
+    </section>
+    <p className="text-center text-xs text-slate-500">Example checklist for prototype demonstration. Confirm the latest requirements with the relevant department before filing.</p>
+  </motion.div>;
 }

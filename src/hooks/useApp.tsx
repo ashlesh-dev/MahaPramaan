@@ -14,7 +14,7 @@ const AppContext = createContext<AppState | undefined>(undefined);
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [role, setRole] = useState<UserRole | null>(() => {
-    const saved = localStorage.getItem('regulaone_role');
+    const saved = localStorage.getItem('maha_pramaan_role') ?? localStorage.getItem('regulaone_role');
     return saved as UserRole | null;
   });
   // The sidebar is fixed on desktop and starts closed on small screens.
@@ -24,9 +24,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const handleSetRole = (newRole: UserRole | null) => {
     setRole(newRole);
     if (newRole) {
-      localStorage.setItem('regulaone_role', newRole);
+      localStorage.setItem('maha_pramaan_role', newRole);
+      localStorage.removeItem('regulaone_role');
     } else {
       localStorage.removeItem('regulaone_role');
+      localStorage.removeItem('maha_pramaan_role');
     }
   };
 

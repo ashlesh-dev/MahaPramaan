@@ -14,11 +14,27 @@
   --color-navy-900: #102a43;
   --color-navy-950: #0a1f33;
 
-  --color-accent-blue: #3b82f6;
-  --color-accent-green: #10b981;
-  --color-accent-amber: #f59e0b;
+  --color-accent-blue: #123b6d;
+  --color-accent-green: #15945b;
+  --color-accent-amber: #ed8500;
   --color-accent-red: #ef4444;
   --color-accent-emerald: #059669;
+
+  --color-blue-50: #edf3fa;
+  --color-blue-100: #dce8f5;
+  --color-blue-200: #b8cde4;
+  --color-blue-300: #8faed0;
+  --color-blue-400: #628bb7;
+  --color-blue-500: #37699b;
+  --color-blue-600: #123b6d;
+  --color-blue-700: #0d2f57;
+  --color-blue-800: #0b2748;
+  --color-blue-900: #081d36;
+  --color-amber-500: #f28c00;
+  --color-amber-600: #ed8500;
+  --color-amber-700: #cf7100;
+  --color-amber-50: #fff7e9;
+  --color-amber-100: #ffedca;
 
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
@@ -216,7 +232,7 @@ textarea:focus {
 /* ── Layout & Sidebar ── */
 .sidebar {
   width: 260px;
-  background: linear-gradient(180deg, #102a43 0%, #0a1f33 100%);
+  background: linear-gradient(180deg, #123b6d 0%, #0a2442 100%);
   color: white;
   display: flex;
   flex-direction: column;
@@ -265,9 +281,9 @@ textarea:focus {
 
 .sidebar-link.active {
   color: white;
-  background: rgba(59, 130, 246, 0.18);
+  background: rgba(237, 133, 0, 0.16);
   font-weight: 600;
-  box-shadow: inset 0 0 0 1px rgba(59, 130, 246, 0.25);
+  box-shadow: inset 3px 0 0 #ed8500, inset 0 0 0 1px rgba(237, 133, 0, 0.18);
 }
 
 /* ── Animation Keyframes ── */

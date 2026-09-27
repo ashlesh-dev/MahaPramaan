@@ -1,5 +1,5 @@
 // ========================================
-// RegulaOne — Core Data Types
+// Maha-Pramaan — Core Data Types
 // ========================================
 
 export type ApprovalStatus =

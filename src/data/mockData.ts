@@ -1,5 +1,5 @@
 // ========================================
-// RegulaOne — Mock Data
+// Maha-Pramaan — Mock Data
 // ========================================
 import type {
   Business, Department, Approval, Application, Document,

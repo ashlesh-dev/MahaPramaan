@@ -13,6 +13,7 @@ export default function Sidebar() {
   const navigate = useNavigate();
 
   const entrepreneurLinks = [
+    { to: '/register', icon: Building2, label: 'New Business Registration' },
     { to: '/overview', icon: LayoutDashboard, label: 'Overview' },
     { to: '/business', icon: Building2, label: 'My Business' },
     { to: '/roadmap', icon: GitBranch, label: 'Approval Roadmap' },
@@ -55,12 +56,10 @@ export default function Sidebar() {
       <aside className={`sidebar ${!sidebarOpen ? '-translate-x-full lg:translate-x-0' : ''}`}>
         <div className="px-4 py-4 flex items-center justify-between border-b border-white/10">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-9 h-9 rounded-lg bg-blue-500 flex items-center justify-center text-white font-bold text-sm shrink-0">
-              R
-            </div>
+            <img src={`${import.meta.env.BASE_URL}brand/maha-pramaan-logo.png`} alt="" className="w-10 h-10 rounded-lg bg-white object-contain p-0.5 shrink-0" />
             <div className="min-w-0">
-              <h1 className="text-[15px] font-semibold text-white tracking-tight truncate">RegulaOne</h1>
-              <p className="text-[10px] text-navy-400 truncate">Maharashtra · SIH 2026</p>
+              <h1 className="text-[15px] font-semibold tracking-tight truncate"><span className="text-white">Maha-</span><span className="text-[#ffad33]">Pramaan</span></h1>
+              <p className="text-[10px] text-navy-300 truncate">Maharashtra · Single Window</p>
             </div>
           </div>
           <button
@@ -75,11 +74,9 @@ export default function Sidebar() {
 
         <div className="px-4 py-3">
           <div className={`flex items-center justify-center gap-2 text-xs px-3 py-2 rounded-lg font-medium ${
-            role === 'officer'
-              ? 'bg-amber-500/15 text-amber-200 ring-1 ring-amber-500/25'
-              : 'bg-blue-500/15 text-blue-200 ring-1 ring-blue-500/25'
+            'bg-white/10 text-blue-50 ring-1 ring-white/15'
           }`}>
-            {role === 'officer' ? <Landmark size={14} /> : <Building2 size={14} />}
+            {role === 'officer' ? <Landmark size={14} className="text-[#ffad33]" /> : <Building2 size={14} className="text-[#ffad33]" />}
             {role === 'officer' ? 'Government Officer' : 'Entrepreneur'}
           </div>
         </div>

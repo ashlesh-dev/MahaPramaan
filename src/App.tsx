@@ -19,6 +19,8 @@ import RiskScrutinyPage from './pages/government/RiskScrutinyPage';
 import GovInspectionPlannerPage from './pages/government/GovInspectionPlannerPage';
 import DataReusePage from './pages/government/DataReusePage';
 import GovApplicationsPage from './pages/government/GovApplicationsPage';
+import RegistrationPage from './pages/entrepreneur/RegistrationPage';
+import PublicHomePage from './pages/PublicHomePage';
 import { useApp } from './hooks/useApp';
 
 export default function App() {
@@ -26,16 +28,14 @@ export default function App() {
 
   return (
     <Routes>
+      <Route path="/" element={role ? <Navigate to={role === 'officer' ? '/gov/overview' : '/overview'} replace /> : <PublicHomePage />} />
       <Route path="/login" element={<LoginPage />} />
-      
-      <Route path="/" element={<Layout />}>
-        {/* Default route based on role */}
-        <Route index element={
-          <Navigate to={role === 'officer' ? '/gov/overview' : role === 'entrepreneur' ? '/overview' : '/login'} replace />
-        } />
+
+      <Route element={<Layout />}>
         
         {/* Entrepreneur Routes */}
         <Route path="overview" element={<OverviewPage />} />
+        <Route path="register" element={<RegistrationPage />} />
         <Route path="business" element={<BusinessProfilePage />} />
         <Route path="roadmap" element={<ApprovalRoadmapPage />} />
         <Route path="applications" element={<ApplicationsPage />} />

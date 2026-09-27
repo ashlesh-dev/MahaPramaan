@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { TrendingUp, Shield, FileText, Clock, AlertCircle, RefreshCcw, CalendarDays, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { TrendingUp, Shield, FileText, Clock, AlertCircle, RefreshCcw, CalendarDays, ArrowRight, CheckCircle2, Building2, FileCheck2, Landmark } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { approvals, applications, complianceItems, alerts as alertsData, daysUntil } from '../../data/mockData';
 
@@ -24,7 +24,19 @@ export default function OverviewPage() {
       {/* Header */}
       <motion.div variants={item}>
         <h1 className="page-title">Good morning, Aarambh Foods</h1>
-        <p className="page-subtitle">Here&apos;s what needs your attention today.</p>
+        <p className="page-subtitle">Your Maharashtra business approvals, compliance and support in one place.</p>
+      </motion.div>
+
+      <motion.div variants={item} className="relative overflow-hidden rounded-2xl bg-[#123b6d] text-white shadow-sm">
+        <div className="absolute inset-0 opacity-15" style={{ backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)', backgroundSize: '24px 24px' }} />
+        <div className="relative grid lg:grid-cols-[1fr_auto] gap-6 items-center p-6 md:p-8">
+          <div><div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-blue-100"><Landmark size={15}/> Maharashtra single-window business support</div>
+            <h2 className="text-xl md:text-2xl font-bold mt-2">From business idea to approvals, with a clearer path.</h2>
+            <p className="text-sm text-blue-100 mt-2 max-w-2xl">Map industrial approvals, prepare documents before submission, track inspections and renewals, and discover government support for your business.</p>
+            <div className="flex flex-wrap gap-2 mt-4 text-xs text-blue-50"><span className="rounded-full bg-white/10 px-3 py-1.5">Approvals & licences</span><span className="rounded-full bg-white/10 px-3 py-1.5">Document readiness</span><span className="rounded-full bg-white/10 px-3 py-1.5">Compliance & renewals</span><span className="rounded-full bg-white/10 px-3 py-1.5">Schemes & support</span></div>
+          </div>
+          <div className="flex flex-col sm:flex-row lg:flex-col gap-2 lg:min-w-56"><button type="button" onClick={() => navigate('/register')} className="flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-3 text-sm font-semibold text-[#123b6d] hover:bg-blue-50"><Building2 size={17}/> New Business Registration <ArrowRight size={15}/></button><button type="button" onClick={() => navigate('/prevalidation')} className="flex items-center justify-center gap-2 rounded-lg border border-white/30 px-4 py-3 text-sm font-semibold text-white hover:bg-white/10"><FileCheck2 size={17}/> Check document readiness</button></div>
+        </div>
       </motion.div>
 
       {/* KPI Cards */}
